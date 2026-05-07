@@ -1,250 +1,299 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DisCloud - Unlimited Cloud Storage using Discord</title>
+    <title>DisCloud — Cloud Storage using Discord</title>
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/github-dark.min.css"
     />
     <style>
+      :root {
+        color-scheme: dark;
+      }
       body {
         background-color: #181a1b;
         color: #eee;
+        min-height: 100vh;
       }
-      .w-100 {
-        max-width: 600px;
+      .wrap {
+        max-width: 720px;
+      }
+      #drop-zone {
+        border: 2px dashed #4a4f54;
+        border-radius: 12px;
+        padding: 48px 16px;
+        text-align: center;
+        background: #1f2226;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      #drop-zone.drag-over {
+        border-color: #5865f2;
+        background: #232843;
+      }
+      .upload-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        background: #1f2226;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+      .upload-row .progress {
+        height: 6px;
+        margin-top: 6px;
+      }
+      .file-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: #1f2226;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+      }
+      .file-row .meta {
+        color: #8a93a0;
+        font-size: 0.78rem;
+      }
+      code {
+        color: #ffb86c;
+      }
+      pre {
+        background: #11141a;
+        padding: 12px;
+        border-radius: 8px;
+        overflow-x: auto;
       }
     </style>
   </head>
   <body>
-    <div class="d-flex flex-column align-items-center mx-3 my-4">
-      <nav class="w-100">
-        <div class="d-flex justify-content-between align-items-center">
-          <h1>DisCloud</h1>
-          <a
-            href="https://github.com/napthedev/discloud"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div class="wrap mx-auto py-4 px-3">
+      <header class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="m-0">DisCloud</h1>
+        <a
+          href="https://github.com/tranhoangmanh/discloud"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-light"
+          aria-label="GitHub"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            fill="currentColor"
+            viewBox="0 0 16 16"
           >
-            <svg
-              style="width: 30px; height: 30px; fill: #fff"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 496 512"
-            >
-              <path
-                d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"
-              />
-            </svg>
-          </a>
-        </div>
-        <p class="text-center my-4 fs-4">
-          Unlimited Cloud Storage using Discord
-        </p>
-      </nav>
-      <div class="w-100">
-        <button class="btn btn-secondary w-100" type="button">
-          Upload File
-        </button>
-        <input class="d-none" type="file" hidden />
-        <div class="mt-3 d-none" id="upload-progress">
-          <p class="mb-0"></p>
-          <div class="progress">
-            <div
-              class="progress-bar"
-              role="progressbar"
-              aria-label="Example with label"
-              style="width: 0%"
-              aria-valuenow="0"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            >
-              0%
-            </div>
-          </div>
-        </div>
-        <div class="alert alert-danger mt-4 d-none" role="alert">
-          Failed to upload
-        </div>
-        <div class="input-group mt-3 d-none" id="result">
-          <button
-            onclick="copyLink()"
-            class="btn btn-secondary"
-            type="button"
-            id="button-addon1"
-          >
-            Copy
-          </button>
-          <input
-            type="text"
-            class="form-control"
-            placeholder=""
-            aria-label="Example text with button addon"
-            aria-describedby="button-addon1"
-            readonly
-            onfocus="this.select()"
-            onclick="this.select()"
-          />
-        </div>
-      </div>
-      <div class="w-100 mt-4">
-        <h4>Advantages</h4>
-        <ul class="fs-6">
-          <li>Unlimited file size</li>
-          <li>Unlimited bandwidth</li>
-          <li>Never delete your files</li>
-          <li>Support video streaming</li>
-          <li>Direct link</li>
-          <li>Can be self-hosted</li>
-        </ul>
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+            />
+          </svg>
+        </a>
+      </header>
+
+      <p class="lead text-secondary">Unlimited Cloud Storage backed by Discord.</p>
+
+      <div id="drop-zone" class="my-4">
+        <p class="m-0 fs-5">Drop files here or click to choose</p>
+        <p class="m-0 small text-secondary">Multiple files supported · max 8 MB per chunk</p>
+        <input type="file" id="file-input" multiple class="d-none" />
       </div>
 
-      <div class="w-100 mt-3">
-        <h4>API Usage</h4>
-        <h6>Request example</h6>
-        <pre><code class="language-javascript">const file = document.querySelector("input").files[0];
-fetch("<span class="href"></span>upload?fileName=react.pdf", {
-  method: "POST",
-  body: file,
-});</code></pre>
-        <h6>Response example</h6>
-        <pre><code class="language-json">{
-  "fileId": "22d9437d2f95b52dd4ffc9e6611d043a",
-  "fileSize": 12863501,
-  "url": "<span class="href"></span>file/22d9437d2f95b52dd4ffc9e6611d043a",
-  "longURL": "<span class="href"></span>file/22d9437d2f95b52dd4ffc9e6611d043a/react.pdf",
-  "downloadURL": "<span class="href"></span>file/22d9437d2f95b52dd4ffc9e6611d043a?download=1",
-  "longDownloadURL": "<span class="href"></span>file/22d9437d2f95b52dd4ffc9e6611d043a/react.pdf?download=1",
-  "parts": [
-    "https://cdn.discordapp.com/attachments/989459557900251186/1001690979327279205/react.pdf-chunk-1",
-    "https://cdn.discordapp.com/attachments/989459557900251186/1001690975644692491/react.pdf-chunk-2"
-  ]
-}</code></pre>
-      </div>
+      <div id="uploads"></div>
 
-      <div class="w-100 mt-3">
-        <h4>How does this work?</h4>
-        <p>
-          Discord allows users to send attachments with a size limit of 8MB per
-          file. This project uses nodejs streaming and buffering to chunk
-          uploaded files into small pieces.
-        </p>
-        <b
-          >Special thanks to:
-          <a
-            class="link-info"
-            href="https://github.com/forscht/ddrive"
-            target="_blank"
-            rel="noopener noreferrer"
-            >DDrive</a
-          >
-          (The original idea and code)
-        </b>
+      <div class="d-flex align-items-center justify-content-between mt-4 mb-2">
+        <h4 class="m-0">Stored files</h4>
+        <button id="refresh" class="btn btn-sm btn-outline-light">Refresh</button>
       </div>
+      <div id="files"></div>
+
+      <details class="mt-5">
+        <summary class="text-secondary">API usage</summary>
+        <div class="mt-3">
+          <p class="mb-2"><b>Direct upload</b></p>
+          <pre><code>POST /upload?fileName=&lt;name&gt;
+body: file bytes</code></pre>
+
+          <p class="mb-2 mt-3"><b>Resumable upload</b></p>
+          <pre><code>1. POST /upload/init  → { uploadId, progressUrl }
+2. POST /upload/:uploadId  (repeat with remaining bytes)
+3. POST /upload/:uploadId/complete  → { fileId, ... }</code></pre>
+
+          <p class="mb-2 mt-3"><b>Files</b></p>
+          <pre><code>GET    /files
+GET    /files/:id
+DELETE /files/:id
+GET    /file/:id          (download)
+GET    /file/:id/:name    (with original name)</code></pre>
+        </div>
+      </details>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
     <script>
-      document
-        .querySelectorAll(".href")
-        .forEach((i) => (i.innerText = location.href));
-      document.querySelectorAll("pre code").forEach((el) => {
-        hljs.highlightElement(el);
-      });
+      const dropZone = document.getElementById("drop-zone");
+      const fileInput = document.getElementById("file-input");
+      const uploadsEl = document.getElementById("uploads");
+      const filesEl = document.getElementById("files");
+      const refreshBtn = document.getElementById("refresh");
 
-      const button = document.querySelector("button");
-      const input = document.querySelector("input");
-      button.addEventListener("click", () => input.click());
-      input.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+      const fmtBytes = (bytes) => {
+        if (!bytes) return "0 B";
+        const u = ["B", "KB", "MB", "GB", "TB"];
+        const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), u.length - 1);
+        return `${(bytes / Math.pow(1024, i)).toFixed(i ? 1 : 0)} ${u[i]}`;
+      };
 
-        document.querySelector("#upload-progress").classList.remove("d-none");
-        document.querySelector(".alert").classList.add("d-none");
-        document.querySelector("#result").classList.add("d-none");
+      const copy = async (text) => {
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            ta.remove();
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
 
-        document.querySelector("#upload-progress p").innerText = file.name;
-
-        const progressBar = document.querySelector(
-          "#upload-progress .progress-bar"
-        );
-
-        progressBar.innerText = "0%";
-        progressBar.style.width = "0";
-        progressBar.setAttribute("aria-valuenow", "0");
+      const uploadFile = (file) => {
+        const row = document.createElement("div");
+        row.className = "upload-row";
+        row.innerHTML = `
+          <div>
+            <div class="d-flex justify-content-between">
+              <span>${file.name}</span>
+              <span class="text-secondary small percent">0%</span>
+            </div>
+            <div class="progress">
+              <div class="progress-bar" style="width:0%"></div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-outline-light copy" disabled>Copy</button>
+        `;
+        uploadsEl.prepend(row);
 
         const xhr = new XMLHttpRequest();
-        const path = `${location.origin}/upload?fileName=${encodeURIComponent(
-          file.name
-        )}`;
-        xhr.open("POST", path, true);
+        xhr.open("POST", `/upload?fileName=${encodeURIComponent(file.name)}`, true);
+        xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
 
         xhr.upload.onprogress = (e) => {
-          const percentage = Math.round((e.loaded / e.total) * 100);
-
-          progressBar.innerText = `${percentage}%`;
-          progressBar.style.width = `${percentage}%`;
-          progressBar.setAttribute("aria-valuenow", `${percentage}`);
+          if (!e.lengthComputable) return;
+          const pct = Math.round((e.loaded / e.total) * 100);
+          row.querySelector(".percent").textContent = `${pct}%`;
+          row.querySelector(".progress-bar").style.width = `${pct}%`;
         };
 
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
-            document.querySelector("#upload-progress").classList.add("d-none");
-            document.querySelector(".alert").classList.add("d-none");
-            document.querySelector("#result").classList.remove("d-none");
-
-            document.querySelector("#result input").value = JSON.parse(
-              xhr.responseText
-            ).longURL;
+            const data = JSON.parse(xhr.responseText);
+            row.querySelector(".percent").textContent = "Done";
+            const btn = row.querySelector(".copy");
+            btn.disabled = false;
+            btn.textContent = "Copy URL";
+            btn.addEventListener("click", () => {
+              copy(`${location.origin}${data.url}`);
+              btn.textContent = "Copied!";
+              setTimeout(() => (btn.textContent = "Copy URL"), 1500);
+            });
+            loadFiles();
           } else {
-            document.querySelector("#upload-progress").classList.add("d-none");
-            document.querySelector(".alert").classList.remove("d-none");
-            console.log(xhr.responseText);
+            row.querySelector(".percent").textContent = "Failed";
+            row.querySelector(".percent").classList.add("text-danger");
+            console.error(xhr.responseText);
           }
-          input.value = "";
         };
+
         xhr.onerror = () => {
-          document.querySelector("#upload-progress").classList.add("d-none");
-          document.querySelector(".alert").classList.remove("d-none");
-          console.log(xhr.responseText);
+          row.querySelector(".percent").textContent = "Failed";
+          row.querySelector(".percent").classList.add("text-danger");
         };
+
         xhr.send(file);
+      };
+
+      dropZone.addEventListener("click", () => fileInput.click());
+      ["dragenter", "dragover"].forEach((ev) =>
+        dropZone.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropZone.classList.add("drag-over");
+        }),
+      );
+      ["dragleave", "drop"].forEach((ev) =>
+        dropZone.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropZone.classList.remove("drag-over");
+        }),
+      );
+      dropZone.addEventListener("drop", (e) => {
+        const files = Array.from(e.dataTransfer?.files ?? []);
+        files.forEach(uploadFile);
+      });
+      fileInput.addEventListener("change", (e) => {
+        const files = Array.from(e.target.files ?? []);
+        files.forEach(uploadFile);
+        e.target.value = "";
       });
 
-      const copyToClipboard = (text) => {
+      const loadFiles = async () => {
         try {
-          if (navigator.clipboard && window.isSecureContext) {
-            return navigator.clipboard.writeText(text);
-          } else {
-            let textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            textArea.style.top = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            return new Promise((res, rej) => {
-              document.execCommand("copy") ? res() : rej();
-              textArea.remove();
-            });
+          const res = await fetch("/files");
+          if (!res.ok) return;
+          const { items } = await res.json();
+          filesEl.innerHTML = "";
+          if (!items.length) {
+            filesEl.innerHTML = '<p class="text-secondary small m-0">No files uploaded yet.</p>';
+            return;
           }
-        } catch (error) {
-          console.error(error);
+          for (const item of items) {
+            const row = document.createElement("div");
+            row.className = "file-row";
+            row.innerHTML = `
+              <div>
+                <div><a href="/file/${item.fileId}/${encodeURIComponent(item.fileName)}" target="_blank" class="text-info text-decoration-none">${item.fileName}</a></div>
+                <div class="meta">${fmtBytes(item.fileSize)} · ${new Date(item.createdAt).toLocaleString()}</div>
+              </div>
+              <button class="btn btn-sm btn-outline-light" data-copy="${location.origin}/file/${item.fileId}/${encodeURIComponent(item.fileName)}">Copy</button>
+              <button class="btn btn-sm btn-outline-danger" data-delete="${item.fileId}">Delete</button>
+            `;
+            filesEl.appendChild(row);
+          }
+          filesEl.querySelectorAll("[data-copy]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              copy(btn.dataset.copy);
+              btn.textContent = "Copied!";
+              setTimeout(() => (btn.textContent = "Copy"), 1500);
+            });
+          });
+          filesEl.querySelectorAll("[data-delete]").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+              if (!confirm("Delete this file?")) return;
+              const r = await fetch(`/files/${btn.dataset.delete}`, {
+                method: "DELETE",
+              });
+              if (r.ok) loadFiles();
+            });
+          });
+        } catch (err) {
+          console.error(err);
         }
       };
 
-      const copyLink = () => {
-        copyToClipboard(document.querySelector("#result input").value);
-      };
+      refreshBtn.addEventListener("click", loadFiles);
+      loadFiles();
     </script>
   </body>
 </html>
