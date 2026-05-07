@@ -64,18 +64,18 @@ docker run -p 5000:5000 \
 
 ## Configuration
 
-| Variable                     | Default          | Description                                     |
-| ---------------------------- | ---------------- | ----------------------------------------------- |
-| `REDIS_URL`                  | _required_       | Redis connection URL                            |
-| `DISCORD_BOT_TOKEN`          | _required_       | Bot token used to upload                        |
-| `DISCORD_CHANNEL_ID`         | _required_       | Channel where chunks are posted                 |
-| `PORT`                       | `5000`           | HTTP port                                       |
-| `LOG_LEVEL`                  | `info`           | Pino log level                                  |
-| `NODE_ENV`                   | `development`    | `development`/`production`/`test`               |
-| `CORS_ORIGINS`               | `*`              | Comma-separated allowed origins                 |
-| `DISCORD_UPLOAD_CONCURRENCY` | `2`              | Parallel uploads to Discord                     |
-| `FILE_TTL_SECONDS`           | `0`              | TTL for stored file metadata (0 = no expiry)    |
-| `DEFAULT_RANGE_SIZE`         | `5242880` (5 MB) | Default size for an open-ended `Range:` request |
+| Variable                     | Default          | Description                                              |
+| ---------------------------- | ---------------- | -------------------------------------------------------- |
+| `REDIS_URL`                  | _required_       | Redis connection URL                                     |
+| `DISCORD_BOT_TOKEN`          | _required_       | Bot token used to upload                                 |
+| `DISCORD_CHANNEL_ID`         | _required_       | Channel where chunks are posted                          |
+| `PORT`                       | `5000`           | HTTP port                                                |
+| `LOG_LEVEL`                  | `info`           | Pino log level                                           |
+| `NODE_ENV`                   | `development`    | `development`/`production`/`test`                        |
+| `CORS_ORIGINS`               | `*`              | Comma-separated allowed origins (`*` = allow any origin) |
+| `DISCORD_UPLOAD_CONCURRENCY` | `2`              | Parallel uploads to Discord                              |
+| `FILE_TTL_SECONDS`           | `0`              | TTL for stored file metadata (0 = no expiry)             |
+| `DEFAULT_RANGE_SIZE`         | `5242880` (5 MB) | Default size for an open-ended `Range:` request          |
 
 ## API
 
@@ -94,10 +94,11 @@ Returns:
   "fileId": "…",
   "fileSize": 12345,
   "sha256": "…",
-  "url": "/file/<fileId>",
-  "longURL": "/file/<fileId>/<fileName>",
-  "downloadURL": "/file/<fileId>?download=1",
-  "longDownloadURL": "/file/<fileId>/<fileName>?download=1",
+  "contentType": "application/octet-stream",
+  "url": "https://<host>/file/<fileId>",
+  "longURL": "https://<host>/file/<fileId>/<fileName>",
+  "downloadURL": "https://<host>/file/<fileId>?download=1",
+  "longDownloadURL": "https://<host>/file/<fileId>/<fileName>?download=1",
   "parts": ["https://cdn.discordapp.com/…", …]
 }
 ```
@@ -105,19 +106,24 @@ Returns:
 ### Resumable upload
 
 ```
-POST /upload/init                  → { uploadId, progressUrl }
+POST /upload/init                  → { uploadId, fileName, contentType, uploadedBytes, progressUrl }
 POST /upload/:uploadId             → append more bytes (any size)
-POST /upload/:uploadId/complete    → { fileId, … }
+                                   → { uploadId, uploadedBytes, partsUploaded }
+POST /upload/:uploadId/complete    → { fileId, fileSize, contentType, url, ... }
 GET  /upload/:uploadId             → status
 GET  /upload/:uploadId/events      → SSE stream of progress events
 DELETE /upload/:uploadId           → cancel
 ```
 
+Notes:
+
+- `sha256` is returned for direct upload. For resumable uploads, the response may include `sha256` but it is not guaranteed; compute checksums client-side if you need strong integrity verification.
+
 ### Files
 
 ```
-GET    /files                  → paginated list
-GET    /files/:id              → metadata
+GET    /files                  → { total, offset, limit, items: [metadata] } (no parts)
+GET    /files/:id              → metadata (no parts)
 DELETE /files/:id              → remove (also deletes Discord messages)
 GET    /file/:id               → download (supports Range)
 GET    /file/:id/:fileName     → download with original name
@@ -126,7 +132,8 @@ GET    /file/:id/:fileName     → download with original name
 ### Health
 
 ```
-GET /health   → { status, redis, uptime }
+GET /health   → { status: "ok", redis: true, uptime }
+GET /health   → { status: "unhealthy", redis: false } (when Redis is down)
 ```
 
 ## Scripts
