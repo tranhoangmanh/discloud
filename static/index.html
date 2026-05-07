@@ -3,151 +3,668 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DisCloud — Cloud Storage using Discord</title>
+    <title>DisCloud — Cloud storage backed by Discord</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>☁️</text></svg>"
     />
     <style>
       :root {
-        color-scheme: dark;
+        color-scheme: light dark;
+
+        /* Light theme (default) */
+        --bg: #f6f7fb;
+        --bg-gradient:
+          radial-gradient(1200px 600px at 100% -10%, rgba(88, 101, 242, 0.12), transparent 60%),
+          radial-gradient(900px 500px at -10% 110%, rgba(88, 101, 242, 0.08), transparent 60%),
+          var(--bg);
+        --surface: #ffffff;
+        --surface-2: #f1f3f9;
+        --border: #e6e8ef;
+        --text: #15171b;
+        --text-muted: #5b6472;
+        --text-faint: #8a93a3;
+        --accent: #5865f2;
+        --accent-soft: #e6e8ff;
+        --danger: #d83a52;
+        --danger-soft: #ffe7eb;
+        --success: #1f9d55;
+        --shadow: 0 1px 2px rgba(15, 17, 22, 0.04), 0 8px 24px rgba(15, 17, 22, 0.06);
+        --shadow-lg: 0 4px 12px rgba(15, 17, 22, 0.06), 0 24px 48px rgba(15, 17, 22, 0.1);
+        --radius: 14px;
       }
+
+      :root[data-theme="dark"] {
+        --bg: #0e0f13;
+        --bg-gradient:
+          radial-gradient(1100px 600px at 100% -10%, rgba(88, 101, 242, 0.18), transparent 60%),
+          radial-gradient(900px 500px at -10% 110%, rgba(255, 110, 199, 0.08), transparent 60%),
+          var(--bg);
+        --surface: #181a21;
+        --surface-2: #20232c;
+        --border: #2a2e3a;
+        --text: #e8eaf0;
+        --text-muted: #a3aab8;
+        --text-faint: #6c7385;
+        --accent: #818cf8;
+        --accent-soft: #2a2f4a;
+        --danger: #ff6f87;
+        --danger-soft: #3b232a;
+        --success: #4ade80;
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5), 0 24px 48px rgba(0, 0, 0, 0.5);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme]) {
+          --bg: #0e0f13;
+          --bg-gradient:
+            radial-gradient(1100px 600px at 100% -10%, rgba(88, 101, 242, 0.18), transparent 60%),
+            radial-gradient(900px 500px at -10% 110%, rgba(255, 110, 199, 0.08), transparent 60%),
+            var(--bg);
+          --surface: #181a21;
+          --surface-2: #20232c;
+          --border: #2a2e3a;
+          --text: #e8eaf0;
+          --text-muted: #a3aab8;
+          --text-faint: #6c7385;
+          --accent: #818cf8;
+          --accent-soft: #2a2f4a;
+          --danger: #ff6f87;
+          --danger-soft: #3b232a;
+          --success: #4ade80;
+          --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+          --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5), 0 24px 48px rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        background-color: #181a1b;
-        color: #eee;
+        margin: 0;
+        font-family:
+          "Inter",
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text);
         min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
       }
+
       .wrap {
-        max-width: 720px;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 32px 20px 80px;
       }
-      #drop-zone {
-        border: 2px dashed #4a4f54;
-        border-radius: 12px;
-        padding: 48px 16px;
-        text-align: center;
-        background: #1f2226;
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 22px;
+        letter-spacing: -0.01em;
+      }
+
+      .logo-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #5865f2, #8b5cf6);
+        display: grid;
+        place-items: center;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(88, 101, 242, 0.4);
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .icon-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        display: grid;
+        place-items: center;
         cursor: pointer;
-        transition: all 0.15s ease;
+        transition:
+          background 0.15s,
+          color 0.15s,
+          transform 0.15s;
       }
-      #drop-zone.drag-over {
-        border-color: #5865f2;
-        background: #232843;
+      .icon-btn:hover {
+        background: var(--surface-2);
+        color: var(--text);
+        transform: translateY(-1px);
+      }
+
+      .tagline {
+        color: var(--text-muted);
+        font-size: 15px;
+        margin: 0 0 24px;
+      }
+
+      .drop-zone {
+        position: relative;
+        background: var(--surface);
+        border: 2px dashed var(--border);
+        border-radius: var(--radius);
+        padding: 48px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s,
+          transform 0.15s;
+        box-shadow: var(--shadow);
+      }
+      .drop-zone:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+      .drop-zone.drag-over {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        transform: scale(1.005);
+      }
+      .drop-zone .upload-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 14px;
+        border-radius: 16px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+      }
+      .drop-zone h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .drop-zone p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+      .drop-zone .accent {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .uploads {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
       }
       .upload-row {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
         display: grid;
         grid-template-columns: 1fr auto;
         gap: 12px;
         align-items: center;
-        background: #1f2226;
-        padding: 12px 16px;
-        border-radius: 8px;
+      }
+      .upload-row .name-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 8px;
       }
-      .upload-row .progress {
-        height: 6px;
-        margin-top: 6px;
+      .upload-row .filename {
+        font-weight: 500;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 480px;
       }
-      .file-row {
+      .upload-row .percent {
+        color: var(--text-faint);
+        font-size: 13px;
+        font-variant-numeric: tabular-nums;
+      }
+      .upload-row .percent.done {
+        color: var(--success);
+      }
+      .upload-row .percent.error {
+        color: var(--danger);
+      }
+
+      .progress {
+        height: 6px;
+        background: var(--surface-2);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), #8b5cf6);
+        width: 0%;
+        transition: width 0.2s ease;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 36px 0 14px;
+      }
+      .section-title h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .section-title .meta {
+        color: var(--text-faint);
+        font-size: 13px;
+      }
+
+      .files {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .file-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
         display: grid;
-        grid-template-columns: 1fr auto auto;
+        grid-template-columns: auto 1fr auto auto;
         gap: 12px;
         align-items: center;
-        padding: 10px 12px;
+        transition:
+          border-color 0.15s,
+          transform 0.15s;
+      }
+      .file-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-1px);
+      }
+      .file-card .file-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .file-card .name {
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--text);
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .file-card .name:hover {
+        color: var(--accent);
+      }
+      .file-card .meta {
+        color: var(--text-faint);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+
+      .btn {
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 500;
         border-radius: 8px;
-        background: #1f2226;
-        margin-bottom: 6px;
-        font-size: 0.9rem;
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
       }
-      .file-row .meta {
-        color: #8a93a0;
-        font-size: 0.78rem;
+      .btn:hover {
+        background: var(--surface-2);
+        color: var(--text);
       }
-      code {
-        color: #ffb86c;
+      .btn.btn-icon {
+        padding: 8px;
       }
-      pre {
-        background: #11141a;
-        padding: 12px;
-        border-radius: 8px;
+      .btn.danger:hover {
+        background: var(--danger-soft);
+        color: var(--danger);
+        border-color: var(--danger);
+      }
+      .btn.copied {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .empty {
+        text-align: center;
+        padding: 32px 16px;
+        color: var(--text-faint);
+        background: var(--surface);
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+      }
+      .empty .emoji {
+        font-size: 28px;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .api-section {
+        margin-top: 48px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+      }
+      .api-section summary {
+        cursor: pointer;
+        font-weight: 600;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .api-section summary::-webkit-details-marker {
+        display: none;
+      }
+      .api-section summary::before {
+        content: "▸";
+        color: var(--text-faint);
+        transition: transform 0.15s;
+      }
+      .api-section[open] summary::before {
+        transform: rotate(90deg);
+      }
+      .api-section pre {
+        background: var(--surface-2);
+        color: var(--text);
+        padding: 12px 14px;
+        border-radius: 10px;
         overflow-x: auto;
+        font-size: 12.5px;
+        font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace;
+      }
+      .api-section h4 {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 16px 0 6px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      footer {
+        margin-top: 48px;
+        text-align: center;
+        color: var(--text-faint);
+        font-size: 13px;
+      }
+      footer a {
+        color: var(--text-muted);
+        text-decoration: none;
+      }
+      footer a:hover {
+        color: var(--accent);
       }
     </style>
   </head>
   <body>
-    <div class="wrap mx-auto py-4 px-3">
-      <header class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="m-0">DisCloud</h1>
-        <a
-          href="https://github.com/tranhoangmanh/discloud"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-light"
-          aria-label="GitHub"
-        >
+    <div class="wrap">
+      <header>
+        <div class="logo">
+          <div class="logo-mark" aria-hidden="true">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.79A6 6 0 1 0 5.5 16" />
+              <polyline points="14 12 12 10 10 12" />
+              <line x1="12" y1="10" x2="12" y2="21" />
+            </svg>
+          </div>
+          DisCloud
+        </div>
+        <div class="header-actions">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">
+            <svg
+              data-theme-icon="light"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+              />
+            </svg>
+            <svg
+              data-theme-icon="dark"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="display: none"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+          <a
+            class="icon-btn"
+            href="https://github.com/tranhoangmanh/discloud"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            title="View on GitHub"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path
+                d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.07c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.27-1.69-1.27-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.86 10.86 0 0 1 5.74 0c2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"
+              />
+            </svg>
+          </a>
+        </div>
+      </header>
+
+      <p class="tagline">
+        Unlimited cloud storage backed by Discord — drag, drop, share. Resumable uploads,
+        video-friendly streaming, optional file expiry.
+      </p>
+
+      <div id="drop-zone" class="drop-zone" role="button" tabindex="0">
+        <div class="upload-icon" aria-hidden="true">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="28"
             height="28"
-            fill="currentColor"
-            viewBox="0 0 16 16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-            />
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
           </svg>
-        </a>
-      </header>
-
-      <p class="lead text-secondary">Unlimited Cloud Storage backed by Discord.</p>
-
-      <div id="drop-zone" class="my-4">
-        <p class="m-0 fs-5">Drop files here or click to choose</p>
-        <p class="m-0 small text-secondary">Multiple files supported · max 8 MB per chunk</p>
-        <input type="file" id="file-input" multiple class="d-none" />
+        </div>
+        <h2>Drop files here or <span class="accent">click to choose</span></h2>
+        <p>Multiple files supported · 8 MB chunks · resumable</p>
+        <input type="file" id="file-input" multiple hidden />
       </div>
 
-      <div id="uploads"></div>
+      <div id="uploads" class="uploads"></div>
 
-      <div class="d-flex align-items-center justify-content-between mt-4 mb-2">
-        <h4 class="m-0">Stored files</h4>
-        <button id="refresh" class="btn btn-sm btn-outline-light">Refresh</button>
+      <div class="section-title">
+        <h3>Stored files</h3>
+        <button id="refresh" class="btn btn-icon" title="Refresh" aria-label="Refresh">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+          </svg>
+        </button>
       </div>
-      <div id="files"></div>
+      <div id="files" class="files"></div>
 
-      <details class="mt-5">
-        <summary class="text-secondary">API usage</summary>
-        <div class="mt-3">
-          <p class="mb-2"><b>Direct upload</b></p>
-          <pre><code>POST /upload?fileName=&lt;name&gt;
-body: file bytes</code></pre>
+      <details class="api-section">
+        <summary>API reference</summary>
 
-          <p class="mb-2 mt-3"><b>Resumable upload</b></p>
-          <pre><code>1. POST /upload/init  → { uploadId, progressUrl }
-2. POST /upload/:uploadId  (repeat with remaining bytes)
-3. POST /upload/:uploadId/complete  → { fileId, ... }</code></pre>
+        <h4>Direct upload</h4>
+        <pre><code>POST /upload?fileName=&lt;name&gt;
+Content-Type: &lt;mime&gt;
 
-          <p class="mb-2 mt-3"><b>Files</b></p>
-          <pre><code>GET    /files
+&lt;bytes&gt;</code></pre>
+
+        <h4>Resumable upload</h4>
+        <pre><code>POST /upload/init               → { uploadId, progressUrl }
+POST /upload/:uploadId          (append more bytes)
+POST /upload/:uploadId/complete → { fileId, ... }
+GET  /upload/:uploadId/events   (SSE progress stream)</code></pre>
+
+        <h4>Files</h4>
+        <pre><code>GET    /files
 GET    /files/:id
 DELETE /files/:id
 GET    /file/:id          (download)
 GET    /file/:id/:name    (with original name)</code></pre>
-        </div>
       </details>
+
+      <footer>
+        Made with ❤️ —
+        <a href="https://github.com/tranhoangmanh/discloud" target="_blank" rel="noopener"
+          >source on GitHub</a
+        >
+      </footer>
     </div>
 
     <script>
-      const dropZone = document.getElementById("drop-zone");
-      const fileInput = document.getElementById("file-input");
-      const uploadsEl = document.getElementById("uploads");
-      const filesEl = document.getElementById("files");
-      const refreshBtn = document.getElementById("refresh");
+      // -----------------------------------------------------------------
+      // Theme toggle
+      // -----------------------------------------------------------------
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("theme-toggle");
+      const lightIcon = themeToggle.querySelector('[data-theme-icon="light"]');
+      const darkIcon = themeToggle.querySelector('[data-theme-icon="dark"]');
 
+      const applyTheme = (theme) => {
+        if (theme === "system") {
+          root.removeAttribute("data-theme");
+        } else {
+          root.setAttribute("data-theme", theme);
+        }
+        const effective =
+          theme === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : theme;
+        lightIcon.style.display = effective === "dark" ? "none" : "";
+        darkIcon.style.display = effective === "dark" ? "" : "none";
+      };
+
+      const stored = localStorage.getItem("theme") || "system";
+      applyTheme(stored);
+
+      themeToggle.addEventListener("click", () => {
+        const cur = localStorage.getItem("theme") || "system";
+        const next = cur === "dark" ? "light" : "dark";
+        localStorage.setItem("theme", next);
+        applyTheme(next);
+      });
+
+      // -----------------------------------------------------------------
+      // Helpers
+      // -----------------------------------------------------------------
       const fmtBytes = (bytes) => {
         if (!bytes) return "0 B";
         const u = ["B", "KB", "MB", "GB", "TB"];
         const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), u.length - 1);
         return `${(bytes / Math.pow(1024, i)).toFixed(i ? 1 : 0)} ${u[i]}`;
+      };
+
+      const fmtDate = (ts) => {
+        const d = new Date(ts);
+        const now = new Date();
+        const diff = (now - d) / 1000;
+        if (diff < 60) return "just now";
+        if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        if (diff < 86400 * 7) return `${Math.floor(diff / 86400)}d ago`;
+        return d.toLocaleDateString();
       };
 
       const copy = async (text) => {
@@ -169,20 +686,54 @@ GET    /file/:id/:name    (with original name)</code></pre>
         }
       };
 
+      const fileTypeIcon = (name) => {
+        const ext = name.split(".").pop().toLowerCase();
+        const map = {
+          pdf: "📄",
+          doc: "📄",
+          docx: "📄",
+          mp4: "🎬",
+          mkv: "🎬",
+          mov: "🎬",
+          webm: "🎬",
+          mp3: "🎵",
+          wav: "🎵",
+          flac: "🎵",
+          png: "🖼️",
+          jpg: "🖼️",
+          jpeg: "🖼️",
+          gif: "🖼️",
+          svg: "🖼️",
+          zip: "🗜️",
+          rar: "🗜️",
+          "7z": "🗜️",
+          tar: "🗜️",
+          gz: "🗜️",
+        };
+        return map[ext] || "📦";
+      };
+
+      // -----------------------------------------------------------------
+      // Upload
+      // -----------------------------------------------------------------
+      const dropZone = document.getElementById("drop-zone");
+      const fileInput = document.getElementById("file-input");
+      const uploadsEl = document.getElementById("uploads");
+      const filesEl = document.getElementById("files");
+      const refreshBtn = document.getElementById("refresh");
+
       const uploadFile = (file) => {
         const row = document.createElement("div");
         row.className = "upload-row";
         row.innerHTML = `
           <div>
-            <div class="d-flex justify-content-between">
-              <span>${file.name}</span>
-              <span class="text-secondary small percent">0%</span>
+            <div class="name-row">
+              <span class="filename">${fileTypeIcon(file.name)} ${file.name}</span>
+              <span class="percent">0%</span>
             </div>
-            <div class="progress">
-              <div class="progress-bar" style="width:0%"></div>
-            </div>
+            <div class="progress"><div class="progress-bar"></div></div>
           </div>
-          <button class="btn btn-sm btn-outline-light copy" disabled>Copy</button>
+          <button class="btn copy" disabled>Copy URL</button>
         `;
         uploadsEl.prepend(row);
 
@@ -200,32 +751,45 @@ GET    /file/:id/:name    (with original name)</code></pre>
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             const data = JSON.parse(xhr.responseText);
-            row.querySelector(".percent").textContent = "Done";
+            const pct = row.querySelector(".percent");
+            pct.textContent = "Done";
+            pct.classList.add("done");
             const btn = row.querySelector(".copy");
             btn.disabled = false;
-            btn.textContent = "Copy URL";
             btn.addEventListener("click", () => {
               copy(`${location.origin}${data.url}`);
+              btn.classList.add("copied");
               btn.textContent = "Copied!";
-              setTimeout(() => (btn.textContent = "Copy URL"), 1500);
+              setTimeout(() => {
+                btn.classList.remove("copied");
+                btn.textContent = "Copy URL";
+              }, 1500);
             });
             loadFiles();
           } else {
-            row.querySelector(".percent").textContent = "Failed";
-            row.querySelector(".percent").classList.add("text-danger");
+            const pct = row.querySelector(".percent");
+            pct.textContent = "Failed";
+            pct.classList.add("error");
             console.error(xhr.responseText);
           }
         };
 
         xhr.onerror = () => {
-          row.querySelector(".percent").textContent = "Failed";
-          row.querySelector(".percent").classList.add("text-danger");
+          const pct = row.querySelector(".percent");
+          pct.textContent = "Failed";
+          pct.classList.add("error");
         };
 
         xhr.send(file);
       };
 
       dropZone.addEventListener("click", () => fileInput.click());
+      dropZone.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
       ["dragenter", "dragover"].forEach((ev) =>
         dropZone.addEventListener(ev, (e) => {
           e.preventDefault();
@@ -235,6 +799,7 @@ GET    /file/:id/:name    (with original name)</code></pre>
       ["dragleave", "drop"].forEach((ev) =>
         dropZone.addEventListener(ev, (e) => {
           e.preventDefault();
+          if (ev === "dragleave" && e.relatedTarget && dropZone.contains(e.relatedTarget)) return;
           dropZone.classList.remove("drag-over");
         }),
       );
@@ -243,52 +808,77 @@ GET    /file/:id/:name    (with original name)</code></pre>
         files.forEach(uploadFile);
       });
       fileInput.addEventListener("change", (e) => {
-        const files = Array.from(e.target.files ?? []);
-        files.forEach(uploadFile);
+        Array.from(e.target.files ?? []).forEach(uploadFile);
         e.target.value = "";
       });
+
+      // -----------------------------------------------------------------
+      // File list
+      // -----------------------------------------------------------------
+      const renderFiles = (items) => {
+        if (!items.length) {
+          filesEl.innerHTML = `
+            <div class="empty">
+              <span class="emoji">📁</span>
+              No files yet — drop one above to get started.
+            </div>`;
+          return;
+        }
+
+        filesEl.innerHTML = items
+          .map(
+            (item) => `
+            <div class="file-card">
+              <div class="file-icon">${fileTypeIcon(item.fileName)}</div>
+              <div style="min-width:0">
+                <a class="name" href="/file/${item.fileId}/${encodeURIComponent(item.fileName)}" target="_blank">${item.fileName}</a>
+                <div class="meta">${fmtBytes(item.fileSize)} · ${fmtDate(item.createdAt)}</div>
+              </div>
+              <button class="btn" data-copy="${location.origin}/file/${item.fileId}/${encodeURIComponent(item.fileName)}">Copy</button>
+              <button class="btn danger btn-icon" data-delete="${item.fileId}" aria-label="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/>
+                  <path d="M10 11v6M14 11v6"/>
+                  <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>`,
+          )
+          .join("");
+
+        filesEl.querySelectorAll("[data-copy]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            copy(btn.dataset.copy);
+            btn.classList.add("copied");
+            btn.textContent = "Copied!";
+            setTimeout(() => {
+              btn.classList.remove("copied");
+              btn.textContent = "Copy";
+            }, 1500);
+          });
+        });
+        filesEl.querySelectorAll("[data-delete]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            if (!confirm("Delete this file? This cannot be undone.")) return;
+            const r = await fetch(`/files/${btn.dataset.delete}`, { method: "DELETE" });
+            if (r.ok) loadFiles();
+          });
+        });
+      };
 
       const loadFiles = async () => {
         try {
           const res = await fetch("/files");
-          if (!res.ok) return;
-          const { items } = await res.json();
-          filesEl.innerHTML = "";
-          if (!items.length) {
-            filesEl.innerHTML = '<p class="text-secondary small m-0">No files uploaded yet.</p>';
+          if (!res.ok) {
+            renderFiles([]);
             return;
           }
-          for (const item of items) {
-            const row = document.createElement("div");
-            row.className = "file-row";
-            row.innerHTML = `
-              <div>
-                <div><a href="/file/${item.fileId}/${encodeURIComponent(item.fileName)}" target="_blank" class="text-info text-decoration-none">${item.fileName}</a></div>
-                <div class="meta">${fmtBytes(item.fileSize)} · ${new Date(item.createdAt).toLocaleString()}</div>
-              </div>
-              <button class="btn btn-sm btn-outline-light" data-copy="${location.origin}/file/${item.fileId}/${encodeURIComponent(item.fileName)}">Copy</button>
-              <button class="btn btn-sm btn-outline-danger" data-delete="${item.fileId}">Delete</button>
-            `;
-            filesEl.appendChild(row);
-          }
-          filesEl.querySelectorAll("[data-copy]").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              copy(btn.dataset.copy);
-              btn.textContent = "Copied!";
-              setTimeout(() => (btn.textContent = "Copy"), 1500);
-            });
-          });
-          filesEl.querySelectorAll("[data-delete]").forEach((btn) => {
-            btn.addEventListener("click", async () => {
-              if (!confirm("Delete this file?")) return;
-              const r = await fetch(`/files/${btn.dataset.delete}`, {
-                method: "DELETE",
-              });
-              if (r.ok) loadFiles();
-            });
-          });
+          const { items } = await res.json();
+          renderFiles(items);
         } catch (err) {
           console.error(err);
+          renderFiles([]);
         }
       };
 
