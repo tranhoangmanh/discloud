@@ -11,130 +11,572 @@
     <style>
       :root {
         color-scheme: dark;
+        --bg0: #070a12;
+        --bg1: #0b1020;
+        --card: rgba(255, 255, 255, 0.06);
+        --card2: rgba(255, 255, 255, 0.08);
+        --stroke: rgba(255, 255, 255, 0.14);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.64);
+        --subtle: rgba(255, 255, 255, 0.48);
+        --accent: #7c5cff;
+        --accent2: #22d3ee;
+        --danger: #ff4d6d;
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+        --radius: 16px;
+        --radius-sm: 12px;
       }
+
+      html,
       body {
-        background-color: #181a1b;
-        color: #eee;
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          Apple Color Emoji,
+          Segoe UI Emoji;
+        color: var(--text);
+        background:
+          radial-gradient(900px 420px at 15% 5%, rgba(124, 92, 255, 0.25), transparent 55%),
+          radial-gradient(900px 420px at 85% 10%, rgba(34, 211, 238, 0.16), transparent 52%),
+          linear-gradient(180deg, var(--bg0), var(--bg1) 38%, #070a12);
         min-height: 100vh;
       }
+
       .wrap {
-        max-width: 720px;
+        max-width: 980px;
       }
-      #drop-zone {
-        border: 2px dashed #4a4f54;
+
+      .glass {
+        background: linear-gradient(180deg, var(--card2), var(--card));
+        border: 1px solid var(--stroke);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .navbrand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        text-decoration: none;
+        color: var(--text);
+      }
+
+      .brandmark {
+        width: 44px;
+        height: 44px;
         border-radius: 12px;
-        padding: 48px 16px;
-        text-align: center;
-        background: #1f2226;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, rgba(124, 92, 255, 0.9), rgba(34, 211, 238, 0.7));
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .brandmark svg {
+        opacity: 0.95;
+      }
+
+      .tagline {
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      .hero {
+        padding: 22px 22px 18px;
+      }
+
+      .hero h1 {
+        font-weight: 720;
+        letter-spacing: -0.03em;
+        margin: 0;
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+      }
+
+      .hero p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        max-width: 58ch;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .chip {
+        font-size: 0.82rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      .chip b {
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 650;
+      }
+
+      .section-title {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.82);
+        margin: 0;
+        letter-spacing: 0.01em;
+      }
+
+      .section-sub {
+        color: var(--muted);
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      .btn-soft {
+        --bs-btn-color: rgba(255, 255, 255, 0.9);
+        --bs-btn-bg: rgba(255, 255, 255, 0.08);
+        --bs-btn-border-color: rgba(255, 255, 255, 0.14);
+        --bs-btn-hover-bg: rgba(255, 255, 255, 0.12);
+        --bs-btn-hover-border-color: rgba(255, 255, 255, 0.18);
+        --bs-btn-active-bg: rgba(255, 255, 255, 0.16);
+        --bs-btn-active-border-color: rgba(255, 255, 255, 0.22);
+        --bs-btn-focus-shadow-rgb: 124, 92, 255;
+        border-radius: 12px;
+      }
+
+      .btn-accent {
+        --bs-btn-color: #0b1020;
+        --bs-btn-bg: rgba(124, 92, 255, 0.95);
+        --bs-btn-border-color: rgba(124, 92, 255, 0.6);
+        --bs-btn-hover-bg: rgba(124, 92, 255, 1);
+        --bs-btn-hover-border-color: rgba(124, 92, 255, 0.8);
+        --bs-btn-focus-shadow-rgb: 124, 92, 255;
+        border-radius: 12px;
+        font-weight: 650;
+      }
+
+      .btn-danger-soft {
+        --bs-btn-color: rgba(255, 255, 255, 0.92);
+        --bs-btn-bg: rgba(255, 77, 109, 0.14);
+        --bs-btn-border-color: rgba(255, 77, 109, 0.35);
+        --bs-btn-hover-bg: rgba(255, 77, 109, 0.22);
+        --bs-btn-hover-border-color: rgba(255, 77, 109, 0.5);
+        --bs-btn-active-bg: rgba(255, 77, 109, 0.28);
+        --bs-btn-active-border-color: rgba(255, 77, 109, 0.62);
+        --bs-btn-focus-shadow-rgb: 255, 77, 109;
+        border-radius: 12px;
+      }
+
+      .drop {
+        border-radius: var(--radius);
+        border: 1px dashed rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.06);
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background 160ms ease;
         cursor: pointer;
-        transition: all 0.15s ease;
+        padding: 24px;
       }
-      #drop-zone.drag-over {
-        border-color: #5865f2;
-        background: #232843;
+
+      .drop.drag-over {
+        border-color: rgba(124, 92, 255, 0.7);
+        background: rgba(124, 92, 255, 0.14);
+        transform: translateY(-1px);
       }
-      .upload-row {
+
+      .drop-inner {
+        display: grid;
+        gap: 10px;
+        place-items: center;
+        text-align: center;
+        padding: 10px 0;
+      }
+
+      .drop-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .drop-title {
+        font-size: 1.05rem;
+        font-weight: 650;
+        margin: 0;
+      }
+
+      .drop-hint {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .upload-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .upload-item {
         display: grid;
         grid-template-columns: 1fr auto;
         gap: 12px;
         align-items: center;
-        background: #1f2226;
-        padding: 12px 16px;
-        border-radius: 8px;
-        margin-bottom: 8px;
+        padding: 14px 14px;
+        border-radius: var(--radius-sm);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
       }
-      .upload-row .progress {
-        height: 6px;
-        margin-top: 6px;
+
+      .upload-name {
+        font-weight: 650;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
       }
-      .file-row {
+
+      .upload-meta {
+        color: var(--muted);
+        font-size: 0.86rem;
+        margin-top: 3px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .bar {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .bar > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, rgba(124, 92, 255, 0.9), rgba(34, 211, 238, 0.8));
+        border-radius: 999px;
+        transition: width 120ms ease;
+      }
+
+      .table-wrap {
+        border-radius: var(--radius);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+      }
+
+      .table-dark {
+        --bs-table-bg: transparent;
+        --bs-table-striped-bg: rgba(255, 255, 255, 0.035);
+        --bs-table-hover-bg: rgba(255, 255, 255, 0.055);
+        --bs-table-border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .table-dark th,
+      .table-dark td {
+        vertical-align: middle;
+      }
+
+      .file-name a {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+      }
+
+      .file-name a:hover {
+        color: rgba(34, 211, 238, 0.95);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .toast-host {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
         display: grid;
-        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        z-index: 20;
+      }
+
+      .toast {
+        width: min(420px, calc(100vw - 32px));
+        background: rgba(12, 16, 30, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 14px;
+        padding: 12px 12px;
+        box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(12px);
+        display: flex;
+        justify-content: space-between;
         gap: 12px;
-        align-items: center;
-        padding: 10px 12px;
-        border-radius: 8px;
-        background: #1f2226;
-        margin-bottom: 6px;
-        font-size: 0.9rem;
+        align-items: start;
+        animation: toast-in 220ms ease both;
       }
-      .file-row .meta {
-        color: #8a93a0;
-        font-size: 0.78rem;
+
+      .toast-title {
+        font-weight: 650;
+        margin: 0;
+        font-size: 0.92rem;
       }
-      code {
-        color: #ffb86c;
+
+      .toast-msg {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 0.88rem;
       }
+
+      .toast-close {
+        border: 0;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.76);
+        padding: 2px 6px;
+        line-height: 1;
+        border-radius: 10px;
+      }
+
+      .toast-close:hover {
+        color: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      @keyframes toast-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .drop,
+        .bar > div {
+          transition: none;
+        }
+        .toast {
+          animation: none;
+        }
+      }
+
       pre {
-        background: #11141a;
-        padding: 12px;
-        border-radius: 8px;
+        margin: 0;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 14px;
+        border-radius: 14px;
         overflow-x: auto;
+      }
+
+      code {
+        color: rgba(34, 211, 238, 0.95);
       }
     </style>
   </head>
   <body>
     <div class="wrap mx-auto py-4 px-3">
-      <header class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="m-0">DisCloud</h1>
-        <a
-          href="https://github.com/tranhoangmanh/discloud"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-light"
-          aria-label="GitHub"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-            />
-          </svg>
+      <header class="d-flex align-items-center justify-content-between mb-3">
+        <a class="navbrand" href="/" aria-label="DisCloud Home">
+          <span class="brandmark" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3.5a7.5 7.5 0 0 0-7.44 6.47A5.5 5.5 0 0 0 6 20.5h11a5.5 5.5 0 0 0 .58-10.97A7.5 7.5 0 0 0 12 3.5Z"
+                stroke="rgba(255,255,255,0.92)"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 11v6m0 0 2.5-2.5M12 17l-2.5-2.5"
+                stroke="rgba(255,255,255,0.92)"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <div>
+            <div class="fw-semibold">DisCloud</div>
+            <div class="tagline">Cloud storage backed by Discord</div>
+          </div>
         </a>
+
+        <div class="d-flex gap-2 align-items-center">
+          <a
+            class="btn btn-soft btn-sm d-inline-flex align-items-center gap-2"
+            href="https://github.com/tranhoangmanh/discloud"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="currentColor"
+              viewBox="0 0 16 16"
+              aria-hidden="true"
+            >
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+              />
+            </svg>
+            GitHub
+          </a>
+        </div>
       </header>
 
-      <p class="lead text-secondary">Unlimited Cloud Storage backed by Discord.</p>
+      <section class="glass hero">
+        <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3">
+          <div>
+            <h1>Lưu trữ file nhanh, gọn, chuyên nghiệp.</h1>
+            <p>
+              Tải lên file trực tiếp, lấy link chia sẻ ngay, và quản lý danh sách file đã lưu. Tất
+              cả được “đỡ” bởi Discord để đơn giản hoá vận hành.
+            </p>
+            <div class="chips">
+              <span class="chip"><b>8MB</b>/chunk</span>
+              <span class="chip"><b>Range</b> download</span>
+              <span class="chip"><b>Copy</b> link 1 chạm</span>
+              <span class="chip"><b>Delete</b> an toàn</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button id="refresh" class="btn btn-soft btn-sm">Tải lại danh sách</button>
+          </div>
+        </div>
+      </section>
 
-      <div id="drop-zone" class="my-4">
-        <p class="m-0 fs-5">Drop files here or click to choose</p>
-        <p class="m-0 small text-secondary">Multiple files supported · max 8 MB per chunk</p>
-        <input type="file" id="file-input" multiple class="d-none" />
-      </div>
+      <section class="mt-3 glass p-3 p-md-4">
+        <div class="d-flex align-items-start justify-content-between gap-3 flex-column flex-md-row">
+          <div>
+            <p class="section-title mb-1">Tải lên</p>
+            <p class="section-sub">Kéo thả file vào khu vực bên dưới hoặc bấm để chọn.</p>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button id="choose" class="btn btn-accent btn-sm">Chọn file</button>
+          </div>
+        </div>
 
-      <div id="uploads"></div>
+        <div id="drop-zone" class="drop mt-3" role="button" tabindex="0" aria-label="Drop files">
+          <div class="drop-inner">
+            <div class="drop-icon" aria-hidden="true">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 16V6m0 0 3 3m-3-3-3 3"
+                  stroke="rgba(255,255,255,0.9)"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M4 16.5a3.5 3.5 0 0 0 3.5 3.5h9A3.5 3.5 0 0 0 20 16.5"
+                  stroke="rgba(255,255,255,0.9)"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <p class="drop-title">Kéo thả file vào đây</p>
+            <p class="drop-hint">Hỗ trợ nhiều file · tự động đặt Content-Type</p>
+          </div>
+          <input type="file" id="file-input" multiple class="d-none" />
+        </div>
 
-      <div class="d-flex align-items-center justify-content-between mt-4 mb-2">
-        <h4 class="m-0">Stored files</h4>
-        <button id="refresh" class="btn btn-sm btn-outline-light">Refresh</button>
-      </div>
-      <div id="files"></div>
-
-      <details class="mt-5">
-        <summary class="text-secondary">API usage</summary>
         <div class="mt-3">
-          <p class="mb-2"><b>Direct upload</b></p>
+          <div class="d-flex align-items-center justify-content-between">
+            <p class="section-title mb-0">Tiến trình</p>
+            <p class="section-sub mb-0" id="upload-hint"></p>
+          </div>
+          <div id="uploads" class="upload-list mt-2"></div>
+        </div>
+      </section>
+
+      <section class="mt-3 glass p-3 p-md-4">
+        <div class="d-flex align-items-start justify-content-between gap-3 flex-column flex-md-row">
+          <div>
+            <p class="section-title mb-1">File đã lưu</p>
+            <p class="section-sub" id="files-meta">Đang tải…</p>
+          </div>
+          <div class="d-flex gap-2 align-items-center">
+            <input
+              id="search"
+              class="form-control form-control-sm"
+              style="
+                max-width: 320px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                color: rgba(255, 255, 255, 0.92);
+              "
+              placeholder="Tìm theo tên file…"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="table-wrap mt-3">
+          <table class="table table-dark table-striped table-hover m-0">
+            <thead>
+              <tr>
+                <th style="width: 50%">Tên</th>
+                <th class="d-none d-md-table-cell" style="width: 16%">Loại</th>
+                <th style="width: 14%">Dung lượng</th>
+                <th class="d-none d-md-table-cell" style="width: 20%">Tải lên lúc</th>
+                <th style="width: 0"></th>
+              </tr>
+            </thead>
+            <tbody id="files"></tbody>
+          </table>
+        </div>
+
+        <div id="files-empty" class="mt-3 muted small" hidden>Chưa có file nào.</div>
+      </section>
+
+      <details class="mt-4 glass p-3 p-md-4">
+        <summary class="muted">API usage</summary>
+        <div class="mt-3">
+          <p class="mb-2 fw-semibold">Direct upload</p>
           <pre><code>POST /upload?fileName=&lt;name&gt;
+Content-Type: &lt;mime&gt;
 body: file bytes</code></pre>
 
-          <p class="mb-2 mt-3"><b>Resumable upload</b></p>
-          <pre><code>1. POST /upload/init  → { uploadId, progressUrl }
-2. POST /upload/:uploadId  (repeat with remaining bytes)
-3. POST /upload/:uploadId/complete  → { fileId, ... }</code></pre>
+          <p class="mb-2 mt-3 fw-semibold">Resumable upload</p>
+          <pre><code>1. POST /upload/init  → { uploadId, fileName, contentType, uploadedBytes, progressUrl }
+2. POST /upload/:uploadId  (repeat with remaining bytes) → { uploadId, uploadedBytes, partsUploaded }
+3. POST /upload/:uploadId/complete  → { fileId, fileSize, contentType, url, ... }</code></pre>
 
-          <p class="mb-2 mt-3"><b>Files</b></p>
-          <pre><code>GET    /files
-GET    /files/:id
+          <p class="mb-2 mt-3 fw-semibold">Files</p>
+          <pre><code>GET    /files                  → { total, offset, limit, items: [metadata] }
+GET    /files/:id               → metadata
 DELETE /files/:id
-GET    /file/:id          (download)
-GET    /file/:id/:name    (with original name)</code></pre>
+GET    /file/:id                (download, supports Range)
+GET    /file/:id/:name          (with original name)</code></pre>
+
+          <p class="mb-2 mt-3 fw-semibold">Health</p>
+          <pre><code>GET /health → { status: "ok", redis: true, uptime }</code></pre>
         </div>
       </details>
     </div>
+
+    <div class="toast-host" id="toasts" aria-live="polite" aria-relevant="additions"></div>
 
     <script>
       const dropZone = document.getElementById("drop-zone");
@@ -142,6 +584,12 @@ GET    /file/:id/:name    (with original name)</code></pre>
       const uploadsEl = document.getElementById("uploads");
       const filesEl = document.getElementById("files");
       const refreshBtn = document.getElementById("refresh");
+      const chooseBtn = document.getElementById("choose");
+      const filesMetaEl = document.getElementById("files-meta");
+      const filesEmptyEl = document.getElementById("files-empty");
+      const searchEl = document.getElementById("search");
+      const uploadHintEl = document.getElementById("upload-hint");
+      const toastHost = document.getElementById("toasts");
 
       const fmtBytes = (bytes) => {
         if (!bytes) return "0 B";
@@ -149,6 +597,18 @@ GET    /file/:id/:name    (with original name)</code></pre>
         const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), u.length - 1);
         return `${(bytes / Math.pow(1024, i)).toFixed(i ? 1 : 0)} ${u[i]}`;
       };
+
+      const fmtDate = (ts) =>
+        new Intl.DateTimeFormat(undefined, {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        }).format(new Date(ts));
+
+      const isAbsoluteUrl = (url) => /^https?:\/\//i.test(url);
+      const toAbsoluteUrl = (url) => (isAbsoluteUrl(url) ? url : `${location.origin}${url}`);
 
       const copy = async (text) => {
         try {
@@ -164,68 +624,107 @@ GET    /file/:id/:name    (with original name)</code></pre>
             document.execCommand("copy");
             ta.remove();
           }
+          toast("Đã copy", text, { ttl: 2200 });
         } catch (err) {
-          console.error(err);
+          toast("Không thể copy", "Trình duyệt chặn clipboard hoặc trang chưa dùng HTTPS.", {
+            tone: "danger",
+            ttl: 3200,
+          });
         }
+      };
+
+      const toast = (title, msg, { ttl = 2600, tone = "default" } = {}) => {
+        const el = document.createElement("div");
+        el.className = "toast";
+        el.dataset.tone = tone;
+        el.innerHTML = `
+          <div style="min-width:0">
+            <p class="toast-title">${title}</p>
+            <p class="toast-msg text-truncate">${msg}</p>
+          </div>
+          <button class="toast-close" aria-label="Close">✕</button>
+        `;
+        toastHost.appendChild(el);
+        const close = () => el.remove();
+        el.querySelector(".toast-close").addEventListener("click", close);
+        window.setTimeout(close, ttl);
       };
 
       const uploadFile = (file) => {
         const row = document.createElement("div");
-        row.className = "upload-row";
+        row.className = "upload-item";
+        const contentType = file.type || "application/octet-stream";
         row.innerHTML = `
-          <div>
-            <div class="d-flex justify-content-between">
-              <span>${file.name}</span>
-              <span class="text-secondary small percent">0%</span>
+          <div style="min-width:0">
+            <div class="d-flex justify-content-between gap-3">
+              <div class="upload-name" title="${file.name}">${file.name}</div>
+              <div class="muted small percent">0%</div>
             </div>
-            <div class="progress">
-              <div class="progress-bar" style="width:0%"></div>
+            <div class="upload-meta">
+              <span>${fmtBytes(file.size)}</span>
+              <span class="d-none d-sm-inline">·</span>
+              <span class="d-none d-sm-inline">${contentType}</span>
             </div>
+            <div class="bar"><div></div></div>
           </div>
-          <button class="btn btn-sm btn-outline-light copy" disabled>Copy</button>
+          <button class="btn btn-soft btn-sm copy" disabled>Copy link</button>
         `;
         uploadsEl.prepend(row);
+        uploadHintEl.textContent = "Đang tải lên…";
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", `/upload?fileName=${encodeURIComponent(file.name)}`, true);
-        xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+        xhr.setRequestHeader("Content-Type", contentType);
 
         xhr.upload.onprogress = (e) => {
           if (!e.lengthComputable) return;
           const pct = Math.round((e.loaded / e.total) * 100);
           row.querySelector(".percent").textContent = `${pct}%`;
-          row.querySelector(".progress-bar").style.width = `${pct}%`;
+          row.querySelector(".bar > div").style.width = `${pct}%`;
         };
 
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
             const data = JSON.parse(xhr.responseText);
-            row.querySelector(".percent").textContent = "Done";
+            row.querySelector(".percent").textContent = "Xong";
             const btn = row.querySelector(".copy");
             btn.disabled = false;
-            btn.textContent = "Copy URL";
+            btn.textContent = "Copy link";
+            const url = toAbsoluteUrl(data.longURL || data.url);
             btn.addEventListener("click", () => {
-              copy(`${location.origin}${data.url}`);
-              btn.textContent = "Copied!";
-              setTimeout(() => (btn.textContent = "Copy URL"), 1500);
+              copy(url);
+              btn.textContent = "Đã copy";
+              setTimeout(() => (btn.textContent = "Copy link"), 1400);
             });
             loadFiles();
           } else {
-            row.querySelector(".percent").textContent = "Failed";
+            row.querySelector(".percent").textContent = "Lỗi";
             row.querySelector(".percent").classList.add("text-danger");
-            console.error(xhr.responseText);
+            toast("Upload thất bại", xhr.responseText || `HTTP ${xhr.status}`, {
+              tone: "danger",
+              ttl: 3600,
+            });
           }
         };
 
         xhr.onerror = () => {
-          row.querySelector(".percent").textContent = "Failed";
+          row.querySelector(".percent").textContent = "Lỗi";
           row.querySelector(".percent").classList.add("text-danger");
+          toast("Upload thất bại", "Không thể kết nối tới server.", { tone: "danger", ttl: 3600 });
         };
 
         xhr.send(file);
       };
 
-      dropZone.addEventListener("click", () => fileInput.click());
+      const openPicker = () => fileInput.click();
+      chooseBtn.addEventListener("click", openPicker);
+      dropZone.addEventListener("click", openPicker);
+      dropZone.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openPicker();
+        }
+      });
       ["dragenter", "dragover"].forEach((ev) =>
         dropZone.addEventListener(ev, (e) => {
           e.preventDefault();
@@ -248,51 +747,93 @@ GET    /file/:id/:name    (with original name)</code></pre>
         e.target.value = "";
       });
 
+      let lastItems = [];
+
+      const renderFiles = (items, { total, offset, limit } = {}) => {
+        filesEl.innerHTML = "";
+        filesEmptyEl.hidden = items.length > 0;
+        const totalLabel = typeof total === "number" ? `${total} file` : `${items.length} file`;
+        if (filesMetaEl) {
+          filesMetaEl.textContent =
+            typeof total === "number"
+              ? `${totalLabel} · hiển thị ${offset + 1}-${Math.min(offset + limit, total)}`
+              : totalLabel;
+        }
+
+        if (!items.length) return;
+
+        for (const item of items) {
+          const tr = document.createElement("tr");
+          const fileUrl = `/file/${item.fileId}/${encodeURIComponent(item.fileName)}`;
+          const displayType = item.contentType || "application/octet-stream";
+          tr.innerHTML = `
+            <td class="file-name">
+              <div class="fw-semibold text-truncate" style="max-width: 520px">
+                <a href="${fileUrl}" target="_blank" rel="noopener noreferrer">${item.fileName}</a>
+              </div>
+              <div class="muted small d-md-none">${displayType} · ${fmtDate(item.createdAt)}</div>
+            </td>
+            <td class="d-none d-md-table-cell muted small">${displayType}</td>
+            <td class="muted small">${fmtBytes(item.fileSize)}</td>
+            <td class="d-none d-md-table-cell muted small">${fmtDate(item.createdAt)}</td>
+            <td class="text-end" style="white-space:nowrap">
+              <button class="btn btn-soft btn-sm me-2" data-copy="${toAbsoluteUrl(fileUrl)}">Copy</button>
+              <button class="btn btn-danger-soft btn-sm" data-delete="${item.fileId}">Xoá</button>
+            </td>
+          `;
+          filesEl.appendChild(tr);
+        }
+
+        filesEl.querySelectorAll("[data-copy]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            copy(btn.dataset.copy);
+            const prev = btn.textContent;
+            btn.textContent = "Đã copy";
+            setTimeout(() => (btn.textContent = prev), 1200);
+          });
+        });
+
+        filesEl.querySelectorAll("[data-delete]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            if (!confirm("Xoá file này?")) return;
+            const r = await fetch(`/files/${btn.dataset.delete}`, { method: "DELETE" });
+            if (r.ok) {
+              toast("Đã xoá", `File ${btn.dataset.delete}`, { ttl: 2200 });
+              loadFiles();
+            } else {
+              toast("Xoá thất bại", `HTTP ${r.status}`, { tone: "danger", ttl: 3200 });
+            }
+          });
+        });
+      };
+
+      const applySearch = () => {
+        const q = (searchEl?.value || "").trim().toLowerCase();
+        const filtered = q
+          ? lastItems.filter((i) => i.fileName.toLowerCase().includes(q))
+          : lastItems;
+        renderFiles(filtered, { total: filtered.length, offset: 0, limit: filtered.length });
+      };
+
       const loadFiles = async () => {
         try {
           const res = await fetch("/files");
-          if (!res.ok) return;
-          const { items } = await res.json();
-          filesEl.innerHTML = "";
-          if (!items.length) {
-            filesEl.innerHTML = '<p class="text-secondary small m-0">No files uploaded yet.</p>';
+          if (!res.ok) {
+            filesMetaEl.textContent = `Không tải được danh sách (HTTP ${res.status}).`;
             return;
           }
-          for (const item of items) {
-            const row = document.createElement("div");
-            row.className = "file-row";
-            row.innerHTML = `
-              <div>
-                <div><a href="/file/${item.fileId}/${encodeURIComponent(item.fileName)}" target="_blank" class="text-info text-decoration-none">${item.fileName}</a></div>
-                <div class="meta">${fmtBytes(item.fileSize)} · ${new Date(item.createdAt).toLocaleString()}</div>
-              </div>
-              <button class="btn btn-sm btn-outline-light" data-copy="${location.origin}/file/${item.fileId}/${encodeURIComponent(item.fileName)}">Copy</button>
-              <button class="btn btn-sm btn-outline-danger" data-delete="${item.fileId}">Delete</button>
-            `;
-            filesEl.appendChild(row);
-          }
-          filesEl.querySelectorAll("[data-copy]").forEach((btn) => {
-            btn.addEventListener("click", () => {
-              copy(btn.dataset.copy);
-              btn.textContent = "Copied!";
-              setTimeout(() => (btn.textContent = "Copy"), 1500);
-            });
-          });
-          filesEl.querySelectorAll("[data-delete]").forEach((btn) => {
-            btn.addEventListener("click", async () => {
-              if (!confirm("Delete this file?")) return;
-              const r = await fetch(`/files/${btn.dataset.delete}`, {
-                method: "DELETE",
-              });
-              if (r.ok) loadFiles();
-            });
-          });
+          const data = await res.json();
+          lastItems = Array.isArray(data.items) ? data.items : [];
+          renderFiles(lastItems, data);
+          if (searchEl?.value) applySearch();
+          uploadHintEl.textContent = uploadsEl.children.length ? "Hoàn tất." : "";
         } catch (err) {
-          console.error(err);
+          filesMetaEl.textContent = "Không thể kết nối tới server.";
         }
       };
 
       refreshBtn.addEventListener("click", loadFiles);
+      searchEl.addEventListener("input", applySearch);
       loadFiles();
     </script>
   </body>
